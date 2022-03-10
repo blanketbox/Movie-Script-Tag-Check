@@ -17,7 +17,8 @@ scene = re.compile(r"""<scene +id=".*" +heading=".+">""")
 screenplay = re.compile(
     r"""<screenplay +title=".*" +authors=".*" +genres=".*">""")
 turn = re.compile(r"""<turn +char=".+" +ext=".*" *>""")
-
+open_sgl_tags = re.compile(r"< *[a-z]+ *>")
+close_sgl_tags = re.compile(r"</ *[a-z]+ *>")
 
 cwd = os.getcwd()
 
@@ -53,10 +54,25 @@ for file in xml_files:
                                                                         "l." + str(all_lines.index(line)+1) + "\t" + line)
                                                                     log_file.write(
                                                                         "\n")
+    frequencies = dict()
+    for line in all_lines:
+        if re.findall(open_sgl_tags, line): 
+            found_open_tags = re.findall(open_sgl_tags, line)
+            for tag in found_open_tags: 
+                frequencies[tag] = frequencies.get(tag, 0) +1
+        
+        if re.findall(close_sgl_tags, line):
+            found_close_tags = re.findall(close_sgl_tags, line)
+            for tag in found_close_tags: 
+                frequencies[tag] = frequencies.get(tag, 0) +1
+    
+    log_file.write("tags in file '{}':\n".format(file) + str(frequencies))
+
+    frequencies = dict()
+    
     xml_file.close()
     log_file.close()
     print("created txt-file '{}_tags.txt' in 'Tag Logs'".format(file[:-4]))
     orig_path = os.path.join(cwd, "{}_tags.txt".format(file[:-4]))
     new_path = os.path.join(cwd, "Tag Logs", "{}_tags.txt".format(file[:-4]))
     os.rename(orig_path, new_path)
-    # print("Done")
