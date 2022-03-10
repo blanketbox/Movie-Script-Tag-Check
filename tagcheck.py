@@ -22,6 +22,8 @@ close_sgl_tags = re.compile(r"</ *[a-z]+ *>")
 
 cwd = os.getcwd()
 
+# CREATE FOLDER AND LIST XML-FILES
+
 if "Tag Logs" not in os.listdir(cwd):
     os.chdir(cwd)
     os.mkdir(os.path.join(cwd, "Tag Logs"))
@@ -29,10 +31,15 @@ if "Tag Logs" not in os.listdir(cwd):
 dir_content = os.listdir(cwd)
 xml_files = [file for file in dir_content if file.endswith(".xml")]
 
+# LOOP THROUGH XML-FILES
+
 for file in xml_files:
     xml_file = open(file, "r")
     log_file = open("{}_tags.txt".format(file[:-4]), "w")
     all_lines = xml_file.readlines()
+
+    # FIND MISSPELLED TAGS
+
     for line in all_lines:
         if line.__contains__("<") or line.__contains__(">"):
             if not re.findall(cont, line):
@@ -54,25 +61,31 @@ for file in xml_files:
                                                                         "l." + str(all_lines.index(line)+1) + "\t" + line)
                                                                     log_file.write(
                                                                         "\n")
+    # DETERMINE FREQUENCIES FOR TAGS
+    
     frequencies = dict()
     for line in all_lines:
-        if re.findall(open_sgl_tags, line): 
+        if re.findall(open_sgl_tags, line):
             found_open_tags = re.findall(open_sgl_tags, line)
-            for tag in found_open_tags: 
-                frequencies[tag] = frequencies.get(tag, 0) +1
-        
+            for tag in found_open_tags:
+                frequencies[tag] = frequencies.get(tag, 0) + 1
+
         if re.findall(close_sgl_tags, line):
             found_close_tags = re.findall(close_sgl_tags, line)
-            for tag in found_close_tags: 
-                frequencies[tag] = frequencies.get(tag, 0) +1
-    
-    log_file.write("tags in file '{}':\n".format(file) + str(frequencies))
+            for tag in found_close_tags:
+                frequencies[tag] = frequencies.get(tag, 0) + 1
+
+    for tag_name, tag_count in frequencies.items(): 
+        log_file.write("{}: {}\n".format(tag_name, tag_count))
 
     frequencies = dict()
-    
+
     xml_file.close()
     log_file.close()
     print("created txt-file '{}_tags.txt' in 'Tag Logs'".format(file[:-4]))
+    
+    # MOVE NEW FILES TO SEPARATE FOLDER
+
     orig_path = os.path.join(cwd, "{}_tags.txt".format(file[:-4]))
     new_path = os.path.join(cwd, "Tag Logs", "{}_tags.txt".format(file[:-4]))
     os.rename(orig_path, new_path)
