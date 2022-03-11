@@ -62,9 +62,31 @@ for file in xml_files:
                                                                     log_file.write(
                                                                         "\n")
     # DETERMINE FREQUENCIES FOR TAGS
-    
+
     frequencies = dict()
     for line in all_lines:
+
+        # ADD FREQUENCIES FOR MULTI WORD TAGS
+
+        if re.findall(scene, line):
+            found_scn_tags = re.findall(scene, line)
+            for tag in found_scn_tags:
+                frequencies["<scene...>"] = frequencies.get(
+                    "<scene...>", 0) + 1
+
+        if re.findall(screenplay, line):
+            found_scr_tags = re.findall(screenplay, line)
+            for tag in found_scr_tags:
+                frequencies["<screenplay...>"] = frequencies.get(
+                    "<screenplay...>", 0) + 1
+
+        if re.findall(turn, line):
+            found_trn_tags = re.findall(turn, line)
+            for tag in found_trn_tags:
+                frequencies["<turn...>"] = frequencies.get("<turn...>", 0) + 1
+
+        # ADD FREQUENCIES FOR SINGLE WORD TAGS
+
         if re.findall(open_sgl_tags, line):
             found_open_tags = re.findall(open_sgl_tags, line)
             for tag in found_open_tags:
@@ -75,7 +97,7 @@ for file in xml_files:
             for tag in found_close_tags:
                 frequencies[tag] = frequencies.get(tag, 0) + 1
 
-    for tag_name, tag_count in frequencies.items(): 
+    for tag_name, tag_count in frequencies.items():
         log_file.write("{}: {}\n".format(tag_name, tag_count))
 
     frequencies = dict()
@@ -83,9 +105,10 @@ for file in xml_files:
     xml_file.close()
     log_file.close()
     print("created txt-file '{}_tags.txt' in 'Tag Logs'".format(file[:-4]))
-    
+
     # MOVE NEW FILES TO SEPARATE FOLDER
 
     orig_path = os.path.join(cwd, "{}_tags.txt".format(file[:-4]))
     new_path = os.path.join(cwd, "Tag Logs", "{}_tags.txt".format(file[:-4]))
     os.rename(orig_path, new_path)
+print("Done")
