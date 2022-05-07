@@ -34,7 +34,7 @@ xml_files = [file for file in dir_content if file.endswith(".xml")]
 # LOOP THROUGH XML-FILES
 
 for file in xml_files:
-    xml_file = open(file, "r")
+    xml_file = open(file, "r", encoding="iso-8859-1")
     log_file = open("{}_tags.txt".format(file[:-4]), "w")
     all_lines = xml_file.readlines()
 
