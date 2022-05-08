@@ -12,6 +12,8 @@ end_scene = re.compile(r"</scene>")
 end_turn = re.compile(r"</turn>")
 end_screenplay = re.compile(r"</screenplay>")
 par = re.compile(r"</?par>")
+pgn = re.compile(r"</?pgn>")
+trans = re.compile(r"</?trans>")
 unc = re.compile(r"</?unc>")  # exclude unc from logs?
 scene = re.compile(r"""<scene +id=".*" +heading=".+">""")
 screenplay = re.compile(
@@ -56,11 +58,13 @@ for file in xml_files:
                                                         if not re.findall(scene, line):
                                                             if not re.findall(screenplay, line):
                                                                 if not re.findall(turn, line):
-                                                                    # print("l." + str(all_lines.index(line)+1) + "\t" + line)  # print wrong lines to terminal
-                                                                    log_file.write(
-                                                                        "l." + str(all_lines.index(line)+1) + "\t" + line)
-                                                                    log_file.write(
-                                                                        "\n")
+                                                                    if not re.findall(pgn, line): 
+                                                                        if not re.findall(trans, line):
+                                                                            # print("l." + str(all_lines.index(line)+1) + "\t" + line)  # print wrong lines to terminal
+                                                                            log_file.write(
+                                                                                "l." + str(all_lines.index(line)+1) + "\t" + line)
+                                                                            log_file.write(
+                                                                                "\n")
     # DETERMINE FREQUENCIES FOR TAGS
 
     frequencies = dict()
