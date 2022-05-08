@@ -35,10 +35,13 @@ xml_files = [file for file in dir_content if file.endswith(".xml")]
 
 # LOOP THROUGH XML-FILES
 
+x = 0
+
 for file in xml_files:
     xml_file = open(file, "r", encoding="iso-8859-1")
     log_file = open("{}_tags.txt".format(file[:-4]), "w")
     all_lines = xml_file.readlines()
+    x += 1 
 
     # FIND MISSPELLED TAGS
 
@@ -108,11 +111,12 @@ for file in xml_files:
 
     xml_file.close()
     log_file.close()
-    print("created txt-file '{}_tags.txt' in 'Tag Logs'".format(file[:-4]))
+    print("'{}_tags.txt' created in 'Tag Logs'".format(file[:-4]))
 
     # MOVE NEW FILES TO SEPARATE FOLDER
 
     orig_path = os.path.join(cwd, "{}_tags.txt".format(file[:-4]))
     new_path = os.path.join(cwd, "Tag Logs", "{}_tags.txt".format(file[:-4]))
     os.rename(orig_path, new_path)
-print("Done")
+print("{} file(s) created in total\nDone".format(x))
+
